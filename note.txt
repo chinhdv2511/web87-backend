@@ -1,0 +1,77 @@
+// // middleware chỉ hoạt động trên đường dẫn /welcome, /welcome/abc/xyz, /welcome, ...
+// app.use('/welcome', express.json());
+
+const userData = [];
+
+app.get('/welcome', (req, res) => {
+    return res.status(200).json({
+        message: 'hello world'
+    });
+});
+
+app.post('/create-world', (req, res) => {
+    return res.status(200).json({
+        message: 'Created world'
+    });
+});
+
+app.delete('/delete-world', (req, res) => {
+    return res.status(200).json({
+        message: 'Deleted world'
+    });
+});
+
+app.post('/welcome', (req, res) => {
+
+    const body = req.body;
+    body.id = v7();
+    userData.push(body);
+
+    return res.status(200).json({
+        message: "Created someone",
+        userData: userData
+    });
+});
+
+app.get('/welcome/:name', (req, res) => {
+
+    // const params = req.params;
+    // const name = params.name;
+
+    const { name } = req.params;
+
+    const existedUser = userData.find((item) => item.name === name);
+
+    if (existedUser) {
+        return res.status(200).json({
+            message: "OK",
+            user: existedUser
+        });
+    }
+
+    return res.status(404).json({
+        message: "Not found user"
+    });
+});
+
+// lấy ra danh sách user, tích hợp tìm kiếm theo tuổi
+app.get('/user-list', (req, res) => {
+
+    const { age, address } = req.query;
+
+    let users = userData;
+
+    if (age) {
+        users = users.filter((item) => item.age == age);
+    }
+
+    if (address) {
+        users = users.filter((item) => item.address == address);
+    }
+
+
+    return res.status(200).json({
+        message: "OK",
+        users: users
+    });
+});
