@@ -1,14 +1,21 @@
 import { v7 } from 'uuid';
 
 import User from "../models/user.model.js";
-import { createUser, getUserByEmailAndPassword } from '../repositories/user.repository.js';
+import userRepository from '../repositories/user.repository.js';
 import { UserView } from '../views/user.view.js';
 
-export const register = (req, res) => {
+export const register = async (req, res) => {
     const { fullname, email, password } = req.body;
 
-    const newUser = new User(v7(), fullname, email, password);
-    createUser(newUser);
+    // kiểm tra người dùng với email
+    const foundUserWithEmail = await userRepository.getUserByEmail(email);
+    if (foundUserWithEmail) {
+        return res.status(400).json({
+            message: 'The email has already been taken by another user'
+        });
+    }
+
+    const newUser = await userRepository.createUser({ fullname, email, password });
 
     const userView = new UserView(newUser);
 
@@ -18,10 +25,10 @@ export const register = (req, res) => {
     });
 }
 
-export const login = (req, res) => {
+export const login = async (req, res) => {
     const { email, password } = req.body;
 
-    const user = getUserByEmailAndPassword(email, password);
+    const user = await userRepository.getUserByEmailAndPassword(email, password);
 
     if (user) {
         const userView = new UserView(user);

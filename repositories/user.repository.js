@@ -1,30 +1,34 @@
-import fs from 'fs';
+import User from "../models/user.model.js";
 
-export const createUser = (user) => {
-    // 1. lấy ra nội dung file users.json
-    const userFileContent = fs.readFileSync('data/users.json');
+const userRepository = {
 
-    // 2. chuyển đổi nội dung file -> mảng
-    const userData = JSON.parse(userFileContent);
+    getUserById: (id) => {
 
-    // 3. thêm user vào mảng userData
-    userData.push(user);
+    },
 
-    // 4. lưu lại userData
-    fs.writeFileSync('data/users.json', JSON.stringify(userData));
+    getUserByEmail: async (email) => {
+        const user = await User.findOne({ email });
+        return user;
+    },
 
-    return user;
-}
+    getUserByEmailAndPassword: async (email, password) => {
+        const user = await User.findOne({ email, password });
+        return user;
+    },
 
-export const getUserByEmailAndPassword = (email, password) => {
-    // 1. lấy ra nội dung file users.json
-    const userFileContent = fs.readFileSync('data/users.json');
+    createUser: async (data) => {
+        const newUser = new User();
+        newUser.fullName = data.fullname;
+        newUser.email = data.email;
+        newUser.password = data.password;
+        newUser.registrationDate = new Date();
 
-    // 2. chuyển đổi nội dung file -> mảng
-    const userData = JSON.parse(userFileContent);
+        await newUser.save();
 
-    // 3. tìm user trong userData theo email, password
-    const existedUser = userData.find(item => item.email == email && item.password == password);
+        return newUser;
+    },
 
-    return existedUser;
-}
+
+};
+
+export default userRepository;

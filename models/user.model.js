@@ -1,8 +1,12 @@
-const User = function (id, fullname, email, password) {
-    this.id = id;
-    this.fullname = fullname;
-    this.email = email;
-    this.password = password;
-}
+import mongoose from "mongoose";
 
+const UserSchema = new mongoose.Schema({
+    fullName: String,
+    email: String,
+    password: String,
+    avatar: String,
+    registrationDate: Date
+});
+
+const User = mongoose.model('users', UserSchema);
 export default User;
