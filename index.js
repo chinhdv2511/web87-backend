@@ -1,9 +1,11 @@
 import express from 'express';
 import { v7 as uuidv7, v7 } from 'uuid';
 
-import { login, register } from './controllers/user.controller.js';
+import { forgotPassword, login, register } from './controllers/user.controller.js';
 import db from './database/db.js';
 import tutorialController from './controllers/tutorial.controller.js';
+import { validateForgotPasswordRequest, validateLoginRequest, validateRegisterRequest } from './middlewares/user.middleware.js';
+import { validateCreateStoryRequest } from './middlewares/story.middleware.js';
 const app = express();
 
 // kết nối đến Database
@@ -13,15 +15,11 @@ db.connect();
 // tất cả request đều chạy qua hàm trung gian (middleware) express.json()
 app.use(express.json());
 
-app.post('/api/v1/auth/login', login);
+app.post('/api/v1/auth/login', validateLoginRequest, login);
 
-app.post('/api/v1/auth/register', register);
+app.post('/api/v1/auth/register', validateRegisterRequest, register);
 
-app.post('/api/v1/auth/forgot-password', (req, res) => {
-    return res.status(200).json({
-        message: 'OK'
-    });
-});
+app.post('/api/v1/auth/forgot-password', validateForgotPasswordRequest, forgotPassword);
 
 app.get('/api/v1/story', (req, res) => {
     return res.status(200).json({
@@ -35,7 +33,7 @@ app.get('/api/v1/story/:id/detail', (req, res) => {
     });
 });
 
-app.post('/api/v1/story/create', (req, res) => {
+app.post('/api/v1/story/create', validateCreateStoryRequest, (req, res) => {
     return res.status(200).json({
         message: 'OK'
     });

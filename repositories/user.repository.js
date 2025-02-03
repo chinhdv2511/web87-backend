@@ -18,10 +18,11 @@ const userRepository = {
 
     createUser: async (data) => {
         const newUser = new User();
-        newUser.fullName = data.fullname;
+        newUser.fullName = data.fullName;
         newUser.email = data.email;
         newUser.password = data.password;
         newUser.registrationDate = new Date();
+        newUser.salt = data.salt;
 
         await newUser.save();
 
