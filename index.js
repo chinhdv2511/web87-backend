@@ -1,5 +1,5 @@
 import express from 'express';
-import { v7 as uuidv7, v7 } from 'uuid';
+import cors from 'cors';
 
 import { forgotPassword, login, register } from './controllers/user.controller.js';
 import db from './database/db.js';
@@ -14,6 +14,7 @@ db.connect();
 // hàm trung gian để backend nhận dạng request body (middleware)
 // tất cả request đều chạy qua hàm trung gian (middleware) express.json()
 app.use(express.json());
+app.use(cors());
 
 app.post('/api/v1/auth/login', validateLoginRequest, login);
 
