@@ -1,11 +1,16 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 
-import { forgotPassword, login, register } from './controllers/user.controller.js';
+import { forgotPassword, getProfile, login, register } from './controllers/user.controller.js';
 import db from './database/db.js';
 import tutorialController from './controllers/tutorial.controller.js';
 import { validateForgotPasswordRequest, validateLoginRequest, validateRegisterRequest } from './middlewares/user.middleware.js';
 import { validateCreateStoryRequest } from './middlewares/story.middleware.js';
+import { authentication } from './middlewares/auth.middleware.js';
+
+dotenv.config();
+
 const app = express();
 
 // kết nối đến Database
@@ -22,7 +27,9 @@ app.post('/api/v1/auth/register', validateRegisterRequest, register);
 
 app.post('/api/v1/auth/forgot-password', validateForgotPasswordRequest, forgotPassword);
 
-app.get('/api/v1/story', (req, res) => {
+app.get('/api/v1/auth/get-profile', authentication, getProfile);
+
+app.get('/api/v1/story', authentication, (req, res) => {
     return res.status(200).json({
         message: 'OK'
     });

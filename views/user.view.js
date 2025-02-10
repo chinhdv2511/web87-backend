@@ -1,7 +1,8 @@
 export const UserView = function (user) {
     return {
         id: user.id,
-        fullname: user.fullname,
-        email: user.email
+        fullName: user.fullName,
+        email: user.email,
+        avatar: user.avatar
     };
 }

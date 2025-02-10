@@ -1,5 +1,5 @@
-import { v7 } from 'uuid';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 import User from "../models/user.model.js";
 import userRepository from '../repositories/user.repository.js';
@@ -36,10 +36,31 @@ export const login = async (req, res) => {
     const user = await userRepository.getUserByEmailAndPassword(email, password);
 
     if (user) {
-        const userView = new UserView(user);
+        const secretKey = process.env.JWT_SECRET_KEY;
+        const accessTokenExpires = process.env.JWT_ACCESS_TOKEN_EXPIRES;
+        const refreshTokenExpires = process.env.JWT_REFRESH_TOKEN_EXPIRES;
+
+        const accessTokenPayload = {
+            userId: user.id,
+            fullName: user.fullName
+        };
+        const accessToken = jwt.sign(accessTokenPayload, secretKey, { expiresIn: accessTokenExpires });
+
+        const refreshTokenPayload = {
+            userId: user.id
+        }
+        const refreshToken = jwt.sign(refreshTokenPayload, secretKey, { expiresIn: refreshTokenExpires });
+
         return res.status(200).json({
             message: "Login successfully",
-            data: userView
+            data: {
+                id: user.id,
+                fullName: user.fullName,
+                email: user.email,
+                avatar: user.avatar,
+                accessToken,
+                refreshToken
+            }
         });
     }
 
@@ -69,4 +90,16 @@ export const forgotPassword = async (req, res) => {
     return res.status(404).json({
         message: "Email was not found"
     });
+}
+
+export const getProfile = async (req, res) => {
+    const currentUserId = req.currentUserId;
+
+    const user = await userRepository.getUserById(currentUserId);
+    const userView = new UserView(user);
+
+    return res.json({
+        message: "OK",
+        data: userView
+    })
 }

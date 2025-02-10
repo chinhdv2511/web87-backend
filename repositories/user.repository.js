@@ -2,8 +2,9 @@ import User from "../models/user.model.js";
 
 const userRepository = {
 
-    getUserById: (id) => {
-
+    getUserById: async (id) => {
+        const user = await User.findById(id);
+        return user;
     },
 
     getUserByEmail: async (email) => {
