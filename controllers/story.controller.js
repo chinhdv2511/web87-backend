@@ -1,4 +1,5 @@
 import storyRepository from "../repositories/story.repository.js";
+import { StoryListView, StoryView } from "../views/story.view.js";
 
 export const getStories = async (req, res) => {
     let { keyword, page, pageSize, orderBy, orderDirection } = req.query;
@@ -8,13 +9,30 @@ export const getStories = async (req, res) => {
     if (!orderBy) orderBy = 'createdAt';
     if (!orderDirection) orderDirection = 'desc';
 
-    console.log(keyword, page, pageSize, orderBy, orderDirection)
-
-    const stories = await storyRepository.getAndPaginateStories({ keyword, page, pageSize, orderBy, orderDirection });
+    const data = await storyRepository.getAndPaginateStories({ keyword, page, pageSize, orderBy, orderDirection });
 
     return res.status(200).json({
         message: "OK",
-        data: stories
+        data: {
+            ...data,
+            stories: StoryListView(data.stories)
+        }
+    });
+}
+
+export const getStory = async (req, res) => {
+    const { id } = req.params;
+
+    const story = await storyRepository.getStoryById(id);
+    if (!story) {
+        return res.status(404).json({
+            message: "Story was not found"
+        });
+    }
+
+    return res.status(200).json({
+        message: "OK",
+        data: StoryView(story)
     });
 }
 

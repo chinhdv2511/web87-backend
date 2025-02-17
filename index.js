@@ -8,7 +8,7 @@ import tutorialController from './controllers/tutorial.controller.js';
 import { validateForgotPasswordRequest, validateLoginRequest, validateRegisterRequest } from './middlewares/user.middleware.js';
 import { validateCreateStoryRequest } from './middlewares/story.middleware.js';
 import { authentication } from './middlewares/auth.middleware.js';
-import { getStories } from './controllers/story.controller.js';
+import { getStories, getStory } from './controllers/story.controller.js';
 
 dotenv.config();
 
@@ -30,12 +30,7 @@ app.get('/api/v1/auth/get-profile', authentication, getProfile);
 
 // story
 app.get('/api/v1/story', authentication, getStories);
-
-app.get('/api/v1/story/:id/detail', (req, res) => {
-    return res.status(200).json({
-        message: 'OK'
-    });
-});
+app.get('/api/v1/story/:id/detail', authentication, getStory);
 
 app.post('/api/v1/story/create', validateCreateStoryRequest, (req, res) => {
     return res.status(200).json({

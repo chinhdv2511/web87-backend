@@ -18,9 +18,19 @@ const storyRepository = {
             limit: pageSize,
             skip: (page - 1) * pageSize,
             sort: sort
-        });
+        })
+            .populate('collectionId', 'title')
+            .populate('userId', 'fullName')
+            .lean();
+
+        // lean -> không sử dụng được các hàm save
 
         return { total: totalStories, totalPages: totalPages, stories };
+    },
+
+    getStoryById: async (id) => {
+        const story = await Story.findById(id).populate('collectionId').populate('userId').lean();
+        return story;
     },
 
     createStory: () => {

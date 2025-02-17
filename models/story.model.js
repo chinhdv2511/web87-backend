@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 
 const StorySchema = new mongoose.Schema({
     title: String,
-    collectionId: mongoose.Types.ObjectId,
+    collectionId: { type: mongoose.Types.ObjectId, ref: 'collections' },
     content: String,
     viewCount: Number,
-    userId: mongoose.Types.ObjectId,
+    userId: { type: mongoose.Types.ObjectId, ref: 'users' },
     createdAt: Date,
     updatedAt: Date,
     images: [String]
