@@ -1,10 +1,10 @@
 export const StoryView = function (story) {
     return {
         ...story,
-        collectionTitle: story.collectionId.title,
-        collectionId: story.collectionId._id,
-        userId: story.userId._id,
-        userFullName: story.userId.fullName
+        collectionTitle: story.collectionId?.title,
+        collectionId: story.collectionId?._id,
+        userId: story.userId?._id,
+        userFullName: story.userId?.fullName
     };
 }
 

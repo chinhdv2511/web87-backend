@@ -33,8 +33,20 @@ const storyRepository = {
         return story;
     },
 
-    createStory: () => {
+    createStory: async ({ title, content, collectionId, images, userId }) => {
+        const newStory = new Story();
+        newStory.title = title;
+        newStory.content = content;
+        newStory.collectionId = collectionId;
+        newStory.images = images;
+        newStory.userId = userId;
+        newStory.viewCount = 0;
+        newStory.createdAt = new Date();
+        newStory.updatedAt = null;
 
+        await newStory.save();
+
+        return newStory.toObject();
     },
 
     updateStory: () => {

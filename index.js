@@ -8,7 +8,9 @@ import tutorialController from './controllers/tutorial.controller.js';
 import { validateForgotPasswordRequest, validateLoginRequest, validateRegisterRequest } from './middlewares/user.middleware.js';
 import { validateCreateStoryRequest } from './middlewares/story.middleware.js';
 import { authentication } from './middlewares/auth.middleware.js';
-import { getStories, getStory } from './controllers/story.controller.js';
+import { createStory, getStories, getStory } from './controllers/story.controller.js';
+import { createCollection, getCollections } from './controllers/collection.controller.js';
+import { validateCreateCollectionRequest } from './middlewares/collection.middleware.js';
 
 dotenv.config();
 
@@ -31,12 +33,12 @@ app.get('/api/v1/auth/get-profile', authentication, getProfile);
 // story
 app.get('/api/v1/story', authentication, getStories);
 app.get('/api/v1/story/:id/detail', authentication, getStory);
+app.post('/api/v1/story/create', authentication, validateCreateStoryRequest, createStory);
 
-app.post('/api/v1/story/create', validateCreateStoryRequest, (req, res) => {
-    return res.status(200).json({
-        message: 'OK'
-    });
-});
+// collection
+app.get('/api/v1/collection', authentication, getCollections);
+app.post('/api/v1/collection/create', authentication, validateCreateCollectionRequest, createCollection);
+
 
 app.get('/api/v1/tutorial', tutorialController.mongoTutorial);
 

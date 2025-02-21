@@ -36,6 +36,13 @@ export const getStory = async (req, res) => {
     });
 }
 
-export const createStory = (req, res) => {
+export const createStory = async (req, res) => {
+    const currentUserId = req.currentUserId;
+    const { title, content, collectionId } = req.body;
 
+    const newStory = await storyRepository.createStory({ title, content, collectionId, userId: currentUserId });
+    return res.status(200).json({
+        message: "OK",
+        data: StoryView(newStory)
+    });
 }
