@@ -1,6 +1,9 @@
 export function CollectionView(collection) {
     return {
-        ...collection
+        id: collection.id,
+        title: collection.title,
+        description: collection.description,
+        createdAt: collection.createdAt
     };
 }
 

@@ -11,6 +11,7 @@ import { authentication } from './middlewares/auth.middleware.js';
 import { createStory, getStories, getStory } from './controllers/story.controller.js';
 import { createCollection, getCollections } from './controllers/collection.controller.js';
 import { validateCreateCollectionRequest } from './middlewares/collection.middleware.js';
+import { simpleResponse } from './middlewares/simpleResponse.middleware.js';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ db.connect();
 // tất cả request đều chạy qua hàm trung gian (middleware) express.json()
 app.use(express.json());
 app.use(cors());
+app.use(simpleResponse);
 
 // auth
 app.post('/api/v1/auth/login', validateLoginRequest, login);

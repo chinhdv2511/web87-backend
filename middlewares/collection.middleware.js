@@ -4,7 +4,7 @@ import { getValidationErrorDetails } from "../utils/validation.utils.js";
 export const validateCreateCollectionRequest = async (req, res, next) => {
 
     const createCollectionRequest = Joi.object({
-        name: Joi.string().trim().max(255).required(),
+        title: Joi.string().trim().max(255).required(),
         description: Joi.string().trim().max(1000)
     });
 

@@ -1,14 +1,21 @@
 import Joi from "joi";
 import { getValidationErrorDetails } from "../utils/validation.utils.js";
 
-export const validateLoginRequest = (req, res, next) => {
-    console.log("Kiểm tra dữ liệu tại chức năng đăng nhập");
-    next();
+export const validateLoginRequest = async (req, res, next) => {
+    const loginRequest = Joi.object({
+        email: Joi.string().trim().email().max(255).required(),
+        password: Joi.string().trim().min(8).max(100).required()
+    });
+
+    try {
+        await loginRequest.validateAsync(req.body, { abortEarly: false });
+        next();
+    } catch (error) {
+        return res.badRequest(getValidationErrorDetails(error));
+    }
 }
 
 export const validateRegisterRequest = async (req, res, next) => {
-    console.log("Kiểm tra dữ liệu tại chức năng đăng ký");
-
     const registerRequest = Joi.object({
         email: Joi.string().trim().email().max(255).required(),
         password: Joi.string().trim().min(8).max(100).required(),
@@ -21,16 +28,11 @@ export const validateRegisterRequest = async (req, res, next) => {
         await registerRequest.validateAsync(req.body, { abortEarly: false });
         next();
     } catch (error) {
-        return res.status(400).json({
-            message: "Invalid data",
-            errors: getValidationErrorDetails(error)
-        });
+        return res.badRequest(getValidationErrorDetails(error));
     }
 }
 
 export const validateForgotPasswordRequest = async (req, res, next) => {
-    console.log("Kiểm tra dữ liệu tại chức quên mật khẩu");
-
     const forgotPasswordRequest = Joi.object({
         email: Joi.string().trim().email().max(255).required()
     });
@@ -39,9 +41,6 @@ export const validateForgotPasswordRequest = async (req, res, next) => {
         await forgotPasswordRequest.validateAsync(req.body, { abortEarly: false });
         next();
     } catch (error) {
-        return res.status(400).json({
-            message: "Invalid data",
-            errors: getValidationErrorDetails(error)
-        });
+        return res.badRequest(getValidationErrorDetails(error));
     }
 }

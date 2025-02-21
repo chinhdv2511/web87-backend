@@ -9,14 +9,14 @@ export const getStories = async (req, res) => {
     if (!orderBy) orderBy = 'createdAt';
     if (!orderDirection) orderDirection = 'desc';
 
-    const data = await storyRepository.getAndPaginateStories({ keyword, page, pageSize, orderBy, orderDirection });
+    const paginationResult = await storyRepository.getAndPaginateStories(
+        { keyword, page, pageSize, orderBy, orderDirection },
+        ['user', 'collection']
+    );
 
-    return res.status(200).json({
-        message: "OK",
-        data: {
-            ...data,
-            stories: StoryListView(data.stories)
-        }
+    return res.ok({
+        ...paginationResult,
+        stories: StoryListView(paginationResult.stories)
     });
 }
 
@@ -24,16 +24,13 @@ export const getStory = async (req, res) => {
     const { id } = req.params;
 
     const story = await storyRepository.getStoryById(id);
+    (await story.populate(['user', 'collection']));
+
     if (!story) {
-        return res.status(404).json({
-            message: "Story was not found"
-        });
+        return res.notFound("", "Story was not found");
     }
 
-    return res.status(200).json({
-        message: "OK",
-        data: StoryView(story)
-    });
+    return res.ok(StoryView(story));
 }
 
 export const createStory = async (req, res) => {
@@ -41,8 +38,5 @@ export const createStory = async (req, res) => {
     const { title, content, collectionId } = req.body;
 
     const newStory = await storyRepository.createStory({ title, content, collectionId, userId: currentUserId });
-    return res.status(200).json({
-        message: "OK",
-        data: StoryView(newStory)
-    });
+    return res.ok(StoryView(newStory));
 }

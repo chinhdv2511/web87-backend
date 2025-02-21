@@ -1,7 +1,7 @@
 import Story from "../models/story.model.js";
 
 const storyRepository = {
-    getAndPaginateStories: async ({ keyword, page, pageSize, orderBy, orderDirection }) => {
+    getAndPaginateStories: async ({ keyword, page, pageSize, orderBy, orderDirection }, populate = []) => {
 
         const query = {};
         if (keyword) {
@@ -17,19 +17,15 @@ const storyRepository = {
         const stories = await Story.find(query, {}, {
             limit: pageSize,
             skip: (page - 1) * pageSize,
-            sort: sort
-        })
-            .populate('collectionId', 'title')
-            .populate('userId', 'fullName')
-            .lean();
-
-        // lean -> không sử dụng được các hàm save
+            sort: sort,
+            populate: populate
+        });
 
         return { total: totalStories, totalPages: totalPages, stories };
     },
 
     getStoryById: async (id) => {
-        const story = await Story.findById(id).populate('collectionId').populate('userId').lean();
+        const story = await Story.findById(id);
         return story;
     },
 
@@ -46,7 +42,7 @@ const storyRepository = {
 
         await newStory.save();
 
-        return newStory.toObject();
+        return newStory;
     },
 
     updateStory: () => {

@@ -11,5 +11,19 @@ const StorySchema = new mongoose.Schema({
     images: [String]
 });
 
+StorySchema.virtual("user", {
+    ref: 'users',
+    localField: 'userId',
+    foreignField: '_id',
+    justOne: true
+});
+
+StorySchema.virtual("collection", {
+    ref: 'collections',
+    localField: 'collectionId',
+    foreignField: '_id',
+    justOne: true
+});
+
 const Story = mongoose.model('stories', StorySchema);
 export default Story;
