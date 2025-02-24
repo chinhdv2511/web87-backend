@@ -6,6 +6,7 @@ export const validateCreateStoryRequest = async (req, res, next) => {
         title: Joi.string().trim().max(255).required(),
         content: Joi.string().trim().max(100000).required(),
         collectionId: Joi.string().max(255),
+        images: Joi.array().max(10),
     });
 
     try {

@@ -35,8 +35,22 @@ export const getStory = async (req, res) => {
 
 export const createStory = async (req, res) => {
     const currentUserId = req.currentUserId;
-    const { title, content, collectionId } = req.body;
+    const { title, content, collectionId, images } = req.body;
 
-    const newStory = await storyRepository.createStory({ title, content, collectionId, userId: currentUserId });
+    const newStory = await storyRepository.createStory({ title, content, collectionId, images, userId: currentUserId });
     return res.ok(StoryView(newStory));
+}
+
+export const uploadFile = (req, res) => {
+
+    const file = req.file;
+    console.log(file);
+
+    const publicDomain = process.env.PUBLIC_DOMAIN;
+
+    return res.ok({
+        name: file.filename,
+        path: publicDomain + '/' + file.path.replaceAll('\\', '/'),
+        size: file.size
+    });
 }
