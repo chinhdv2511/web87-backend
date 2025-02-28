@@ -9,7 +9,7 @@ const collectionRepository = {
             query.userId = userId;
         }
 
-        const collections = await Collection.find(query).lean();
+        const collections = await Collection.find(query);
 
         return collections;
     },

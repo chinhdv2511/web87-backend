@@ -45,8 +45,10 @@ const storyRepository = {
         return newStory;
     },
 
-    updateStory: () => {
-
+    updateStory: async (story) => {
+        // const story = await Story.findByIdAndUpdate(id, data);
+        // return story;
+        await story.save();
     },
 
     updateStoryViewCount: () => {

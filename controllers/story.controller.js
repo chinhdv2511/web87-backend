@@ -41,6 +41,29 @@ export const createStory = async (req, res) => {
     return res.ok(StoryView(newStory));
 }
 
+export const updateStory = async (req, res) => {
+    const currentUserId = req.currentUserId;
+
+    const { id } = req.params;
+    const { title, content, collectionId, images } = req.body;
+
+    const story = await storyRepository.getStoryById(id);
+    if (!story) {
+        return res.notFound("The story was not found", "Not found");
+    } else if (story.userId.toString() != currentUserId) {
+        return res.forbidden("You are not allowed to update this story");
+    }
+
+    story.title = title;
+    story.collectionId = collectionId;
+    story.content = content;
+    story.images = images;
+    await storyRepository.updateStory(story);
+
+    return res.ok(StoryView(story));
+}
+
+
 export const uploadFile = (req, res) => {
 
     const file = req.file;

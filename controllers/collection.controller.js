@@ -5,7 +5,7 @@ import { CollectionView, CollectionListView } from "../views/collection.view.js"
 export const getCollections = async (req, res) => {
     const currentUserId = req.currentUserId;
 
-    const collections = collectionRepository.getCollections({ userId: currentUserId });
+    const collections = await collectionRepository.getCollections({ userId: currentUserId });
     return res.ok(CollectionListView(collections));
 }
 
