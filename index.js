@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import multer from 'multer';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
 import { v7 } from 'uuid';
 
 import { forgotPassword, getProfile, login, register } from './controllers/user.controller.js';
@@ -14,21 +15,47 @@ import { createStory, getStories, getStory, updateStory, uploadFile } from './co
 import { createCollection, getCollections } from './controllers/collection.controller.js';
 import { validateCreateCollectionRequest } from './middlewares/collection.middleware.js';
 import { simpleResponse } from './middlewares/simpleResponse.middleware.js';
+import cloudinary from './configs/cloudinaryConfig.js';
 
 dotenv.config();
 
 const app = express();
 
-const storage = multer.diskStorage({
-    destination: 'public/uploads',
-    filename: (req, file, callback) => {
-        const extension = file.originalname.split('.').pop();
-        const filename = v7();
-        console.log(filename)
-        callback(null, filename + '.' + extension);
+// const storage = multer.diskStorage({
+//     destination: 'public/uploads',
+//     filename: (req, file, callback) => {
+//         const extension = file.originalname.split('.').pop();
+//         const filename = v7();
+//         console.log(filename)
+//         callback(null, filename + '.' + extension);
+//     }
+// });
+
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'images',
+        public_id: (req, file) => {
+            // const extension = file.originalname.split('.').pop();
+            const filename = v7();
+            return filename;
+        }
     }
 });
-const upload = multer({ storage });
+
+const fileFilter = (req, file, cb) => {
+    const mimeType = file.mimetype;
+    // image/png, image/jpg, image/jpeg
+    const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    const fileMimeType = file.mimetype;
+    if (allowedMimeTypes.includes(fileMimeType)) {
+        cb(null, true);
+    } else {
+        cb(new Error("Invalid file type"), false);
+    }
+}
+
+const upload = multer({ storage, fileFilter });
 
 // kết nối đến Database
 db.connect();

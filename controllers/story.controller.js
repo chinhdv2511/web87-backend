@@ -73,7 +73,7 @@ export const uploadFile = (req, res) => {
 
     return res.ok({
         name: file.filename,
-        path: publicDomain + '/' + file.path.replaceAll('\\', '/'),
+        path: file.path.replaceAll('\\', '/'),
         size: file.size
     });
 }
